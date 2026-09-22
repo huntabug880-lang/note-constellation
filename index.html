@@ -1,44 +1,22 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#070b29" />
-  <title>Note Constellation — Signal Globe</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Note Constellation · OSINT Globe</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="app-shell">
-    <header class="topbar">
-      <a class="brand" href="#"><span class="brand-mark"><i></i><i></i><i></i></span><span>note<span>constellation</span></span></a>
-      <div class="topbar-actions"><span class="saved-status" id="savedStatus"><span class="status-dot"></span> All changes saved</span><button class="icon-button" id="themeToggle" aria-label="Toggle glow mode">☼</button><div class="avatar">HB</div></div>
-    </header>
-
-    <main class="workspace">
-      <section class="intro-row">
-        <div><p class="eyebrow">YOUR UNIVERSE · <span id="noteCount">03</span> NOTES</p><h1>Think in <em>constellations.</em></h1><p class="subcopy">Capture sparks of thought, then connect the dots.</p></div>
-        <button class="primary-button" id="newNoteButton"><span>＋</span> New note</button>
-      </section>
-
-      <section class="constellation-card" aria-label="Your note constellation">
-        <div class="space-noise"></div><div class="constellation-label label-one">ideas</div><div class="constellation-label label-two">projects</div><div class="constellation-label label-three">inspiration</div>
-        <svg class="constellation-lines" viewBox="0 0 1000 440" preserveAspectRatio="none" aria-hidden="true"><path d="M95 252 L180 145 L286 196 L365 103 L470 164 L542 79 L636 161 L735 106 L814 194 L903 119"/><path d="M180 145 L205 303 L286 196 L345 305 L470 164"/><path d="M542 79 L570 270 L636 161 L685 300 L814 194"/><path d="M735 106 L770 32 M814 194 L892 283 L903 119"/></svg>
-        <div class="zodiac-label gemini">GEMINI</div><div class="zodiac-label taurus">TAURUS</div><div class="zodiac-label aries">ARIES</div><div class="zodiac-label pisces">PISCES</div><div class="zodiac-label scorpio">SCORPIUS</div><div class="zodiac-label virgo">VIRGO</div><div class="zodiac-label leo">LEO</div><div class="zodiac-label sagittarius">SAGITTARIUS</div><div class="zodiac-label aquarius">AQUARIUS</div><div class="zodiac-label cancer">CANCER</div><div class="zodiac-label libra">LIBRA</div><div class="zodiac-label capricorn">CAPRICORN</div>
-        <div class="star-field" id="starField"></div>
-        <button class="note-node node-a" type="button" data-note="0"><span class="node-glow"></span><span class="node-core">✦</span><span class="node-caption">The beginning</span></button><button class="note-node node-b" type="button" data-note="1"><span class="node-glow"></span><span class="node-core">✦</span><span class="node-caption">Design system</span></button><button class="note-node node-c" type="button" data-note="2"><span class="node-glow"></span><span class="node-core">✦</span><span class="node-caption">Quiet rituals</span></button><button class="note-node node-d" type="button" data-note="3"><span class="node-glow"></span><span class="node-core">✦</span><span class="node-caption">New spark</span></button><button class="note-node node-e" type="button" data-note="4"><span class="node-glow"></span><span class="node-core">✦</span><span class="node-caption">Collect notes</span></button><button class="note-node node-f" type="button" data-note="5"><span class="node-glow"></span><span class="node-core">✦</span><span class="node-caption">Side quests</span></button>
-        <button class="ip-globe-launch" id="openGlobeButton" type="button"><span>◎</span> Locate an IP on the globe</button>
-      </section>
-
-      <section class="notes-section"><div class="section-heading"><h2>Recent sparks</h2><span>Keep orbiting ideas alive</span></div><div class="notes-grid" id="notesGrid"></div></section>
+    <header class="topbar"><a class="brand" href="#"><b class="brand-mark">✦</b>note<span>constellation</span></a><div class="top-actions"><span id="saveStatus">● saved</span><button id="themeToggle" class="icon-button">☼</button><b class="avatar">HB</b></div></header>
+    <main>
+      <section class="intro"><div><p class="eyebrow">OSINT WORKSPACE · <span id="pinCount">00</span> LOCATION PINS</p><h1>Map the <em>signal.</em></h1><p class="subcopy">Connect notes, dates, and approximate IP locations in one visual constellation.</p></div><button id="openGlobe" class="primary">＋ Add dated IP</button></section>
+      <section class="constellation"><div class="stars" id="stars"></div><svg viewBox="0 0 1000 440" preserveAspectRatio="none"><path d="M80 260L190 130L300 205L420 100L535 170L650 80L760 175L900 115M190 130L245 325L300 205M535 170L590 325L760 175L820 300"/></svg><div class="zodiac z1">GEMINI</div><div class="zodiac z2">TAURUS</div><div class="zodiac z3">ARIES</div><div class="zodiac z4">SCORPIUS</div><div class="zodiac z5">VIRGO</div><div class="zodiac z6">AQUARIUS</div><div id="constellationPins"></div><p class="hint">Add an IP with a date to create a glowing location pin</p></section>
+      <section class="lower"><div class="section-title"><div><p class="eyebrow">LOCATION LOG</p><h2>Signal history</h2></div><button id="exportPins" class="secondary">Export JSON</button></div><div id="pinList" class="pin-list"></div></section>
     </main>
   </div>
-
-  <dialog id="noteDialog"><form class="note-form" id="noteForm"><div class="dialog-header"><h3>Edit note</h3><button type="button" class="dialog-close" data-close-dialog>×</button></div><label><span>Title</span><input id="noteTitle" maxlength="80" required /></label><label><span>Tag</span><input id="noteTag" maxlength="24" /></label><label><span>Thought</span><textarea id="noteBody" rows="6" required></textarea></label><div class="color-picker-wrap"><span>Glow</span><div class="color-options" id="colorOptions"></div></div><div class="dialog-actions"><button type="button" class="secondary-button" data-close-dialog>Cancel</button><button type="submit" class="primary-button narrow">Save note</button></div></form></dialog>
-
-  <dialog id="globeDialog" class="globe-dialog"><div class="globe-modal"><div class="dialog-header"><div><p class="eyebrow">SIGNAL ORBIT</p><h2>Locate an IP</h2></div><button type="button" class="dialog-close" data-close-globe>×</button></div><p class="globe-intro">Enter a public IP to plot its approximate geolocation. The result is an estimate, not a precise physical address.</p><form id="ipForm" class="ip-form"><input id="ipInput" inputmode="decimal" placeholder="8.8.8.8" aria-label="Public IP address" required /><button class="primary-button narrow" type="submit">Ping globe</button></form><p id="ipStatus" class="ip-status" role="status"></p><div class="globe-stage" id="globeStage" aria-label="IP location globe"><div class="globe"><div class="globe-grid"></div><div class="globe-land land-one"></div><div class="globe-land land-two"></div><div class="globe-land land-three"></div><div class="globe-pin" id="globePin"><span></span></div><div class="globe-scan"></div></div><div class="globe-horizon"></div></div><div class="location-readout" id="locationReadout"><span class="readout-kicker">AWAITING SIGNAL</span><strong>Enter an IP to light the map</strong></div></div></dialog>
+  <dialog id="globeDialog"><div class="modal-head"><div><p class="eyebrow">SIGNAL ORBIT</p><h2>Add location pin</h2></div><button class="close" data-close>×</button></div><p class="muted">Enter a public IP and the date associated with the observation. Location is approximate.</p><form id="ipForm"><label>Public IP<input id="ipInput" placeholder="8.8.8.8" required></label><label>Observation date<input id="dateInput" type="date" required></label><label>Label / case note<input id="labelInput" placeholder="Last known signal"></label><button class="primary" type="submit">Ping globe</button></form><p id="ipStatus" class="status"></p><div class="globe-wrap"><div class="globe" id="globe"><div class="grid"></div><div class="land land-a"></div><div class="land land-b"></div><div class="live-pin" id="livePin"><i></i></div></div></div><div id="locationReadout" class="readout">AWAITING SIGNAL<br><strong>Enter an IP to light the globe</strong></div></dialog>
   <script src="app.js"></script>
 </body>
 </html>

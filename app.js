@@ -1,143 +1,24 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Note Constellation</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <div class="app-shell">
-      <header class="topbar">
-        <a class="brand" href="#" aria-label="Note Constellation home">
-          <span class="brand-mark"><i></i><i></i><i></i></span>
-          <span>note<span>constellation</span></span>
-        </a>
+const STORAGE_KEY='constellation-ip-pins';
+const pins=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');
+const globeDialog=document.getElementById('globeDialog');
+const globe=document.getElementById('globe');
+const livePin=document.getElementById('livePin');
+const status=document.getElementById('saveStatus');
+const pinList=document.getElementById('pinList');
+const pinCount=document.getElementById('pinCount');
+const locationReadout=document.getElementById('locationReadout');
+const ipStatus=document.getElementById('ipStatus');
+const ipForm=document.getElementById('ipForm');
+const dateInput=document.getElementById('dateInput');
 
-        <div class="topbar-actions">
-          <span class="saved-status" id="savedStatus"><span class="status-dot"></span> All changes saved</span>
-          <button class="icon-button" id="themeToggle" aria-label="Toggle glow mode">☼</button>
-          <div class="avatar">HB</div>
-        </div>
-      </header>
-
-      <main class="workspace">
-        <section class="intro-row">
-          <div>
-            <p class="eyebrow">YOUR UNIVERSE · <span id="noteCount">03</span> NOTES</p>
-            <h1>Think in <em>constellations.</em></h1>
-            <p class="subcopy">Capture sparks of thought, then connect the dots.</p>
-          </div>
-          <button class="primary-button" id="newNoteButton"><span>＋</span> New note</button>
-        </section>
-
-        <section class="constellation-card" aria-label="Your note constellation">
-          <div class="space-noise"></div>
-          <div class="constellation-label label-one">ideas</div>
-          <div class="constellation-label label-two">projects</div>
-          <div class="constellation-label label-three">inspiration</div>
-
-          <svg class="constellation-lines" viewBox="0 0 1000 440" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M95 252 L180 145 L286 196 L365 103 L470 164 L542 79 L636 161 L735 106 L814 194 L903 119" />
-            <path d="M180 145 L205 303 L286 196 L345 305 L470 164" />
-            <path d="M542 79 L570 270 L636 161 L685 300 L814 194" />
-            <path d="M735 106 L770 32 M814 194 L892 283 L903 119" />
-          </svg>
-
-          <div class="zodiac-label gemini">GEMINI</div>
-          <div class="zodiac-label taurus">TAURUS</div>
-          <div class="zodiac-label aries">ARIES</div>
-          <div class="zodiac-label pisces">PISCES</div>
-          <div class="zodiac-label scorpio">SCORPIUS</div>
-          <div class="zodiac-label virgo">VIRGO</div>
-          <div class="zodiac-label leo">LEO</div>
-          <div class="zodiac-label sagittarius">SAGITTARIUS</div>
-          <div class="zodiac-label aquarius">AQUARIUS</div>
-          <div class="zodiac-label cancer">CANCER</div>
-          <div class="zodiac-label libra">LIBRA</div>
-          <div class="zodiac-label capricorn">CAPRICORN</div>
-
-          <div class="star-field" id="starField"></div>
-
-          <button class="note-node node-a" type="button" data-note="0">
-            <span class="node-glow"></span>
-            <span class="node-core">✦</span>
-            <span class="node-caption">The beginning</span>
-          </button>
-          <button class="note-node node-b" type="button" data-note="1">
-            <span class="node-glow"></span>
-            <span class="node-core">✦</span>
-            <span class="node-caption">Design system</span>
-          </button>
-          <button class="note-node node-c" type="button" data-note="2">
-            <span class="node-glow"></span>
-            <span class="node-core">✦</span>
-            <span class="node-caption">Quiet rituals</span>
-          </button>
-          <button class="note-node node-d" type="button" data-note="3">
-            <span class="node-glow"></span>
-            <span class="node-core">✦</span>
-            <span class="node-caption">New spark</span>
-          </button>
-          <button class="note-node node-e" type="button" data-note="4">
-            <span class="node-glow"></span>
-            <span class="node-core">✦</span>
-            <span class="node-caption">Collect notes</span>
-          </button>
-          <button class="note-node node-f" type="button" data-note="5">
-            <span class="node-glow"></span>
-            <span class="node-core">✦</span>
-            <span class="node-caption">Side quests</span>
-          </button>
-        </section>
-
-        <section class="notes-section" aria-label="Note cards">
-          <div class="section-heading">
-            <h2>Recent sparks</h2>
-            <span>Keep orbiting ideas alive</span>
-          </div>
-          <div class="notes-grid" id="notesGrid"></div>
-        </section>
-      </main>
-    </div>
-
-    <dialog id="noteDialog" aria-labelledby="noteDialogTitle">
-      <form class="note-form" id="noteForm" method="dialog">
-        <div class="dialog-header">
-          <h3 id="noteDialogTitle">Edit note</h3>
-          <button type="button" class="dialog-close" data-close-dialog aria-label="Close note editor">×</button>
-        </div>
-
-        <label>
-          <span>Title</span>
-          <input id="noteTitle" name="title" type="text" maxlength="80" placeholder="Title your spark" />
-        </label>
-
-        <label>
-          <span>Tag</span>
-          <input id="noteTag" name="tag" type="text" maxlength="24" placeholder="starting point" />
-        </label>
-
-        <label>
-          <span>Thought</span>
-          <textarea id="noteBody" name="body" rows="6" placeholder="Write the note that wants to grow..."></textarea>
-        </label>
-
-        <div class="color-picker-wrap">
-          <span>Glow</span>
-          <div class="color-options" id="colorOptions"></div>
-        </div>
-
-        <div class="dialog-actions">
-          <button type="button" class="secondary-button" data-close-dialog>Cancel</button>
-          <button type="submit" class="primary-button narrow">Save note</button>
-        </div>
-      </form>
-    </dialog>
-
-    <script src="app.js"></script>
-  </body>
-</html>
+dateInput.value=new Date().toISOString().slice(0,10);
+function escapeHtml(value){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function persist(){localStorage.setItem(STORAGE_KEY,JSON.stringify(pins));status.textContent='● saved';renderPins()}
+function renderPins(){pinList.innerHTML='';pinCount.textContent=String(pins.length).padStart(2,'0');if(!pins.length){pinList.innerHTML='<div class="empty">No dated signals yet. Add an IP to create the first glowing pin.</div>';return}pins.slice().reverse().forEach((pin,index)=>{const card=document.createElement('article');card.className='pin-card';card.innerHTML=`<span class="pin-meta">${escapeHtml(pin.date)} · ${escapeHtml(pin.ip)}</span><h3>${escapeHtml(pin.label||pin.city||'Signal location')}</h3><p>${escapeHtml(pin.city||'Approximate location unavailable')}${pin.country?`, ${escapeHtml(pin.country)}`:''}<br><small>${escapeHtml(pin.source||'Geolocation lookup')}</small></p>`;card.addEventListener('click',()=>showPin(pin));pinList.appendChild(card)})}
+function showPin(pin){const visual=toGlobePosition(pin.latitude,pin.longitude);document.querySelectorAll('.constellation-pin').forEach(el=>el.remove());const marker=document.createElement('button');marker.className='constellation-pin';marker.title=`${pin.ip} · ${pin.date}`;marker.style.left=`${visual.x}%`;marker.style.top=`${visual.y}%`;marker.addEventListener('click',()=>showPin(pin));document.getElementById('constellationPins').appendChild(marker);locationReadout.innerHTML=`<span>${escapeHtml(pin.ip)} · ${escapeHtml(pin.date)}</span><strong>${escapeHtml(pin.city||'Unknown area')}${pin.country?', '+escapeHtml(pin.country):''}</strong>`}
+function toGlobePosition(lat,lon){return{x:50+(Number(lon)/180)*38,y:50-(Number(lat)/90)*36}}
+function validIp(value){const v=value.trim();const ipv4=/^(25[0-5]|2[0-4]\d|1?\d?\d)(\.(25[0-5]|2[0-4]\d|1?\d?\d)){3}$/;const ipv6=/^[0-9a-f:]+$/i;return ipv4.test(v)||ipv6.test(v)}
+document.getElementById('openGlobe').addEventListener('click',()=>{globeDialog.showModal();document.getElementById('ipInput').focus()});document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>globeDialog.close()));document.getElementById('themeToggle').addEventListener('click',()=>document.body.classList.toggle('high-glow'));document.getElementById('exportPins').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(pins,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='constellation-ip-pins.json';a.click();URL.revokeObjectURL(a.href)});
+ipForm.addEventListener('submit',async event=>{event.preventDefault();const ip=document.getElementById('ipInput').value.trim();if(!validIp(ip)){ipStatus.textContent='Enter a valid public IPv4 or IPv6 address.';return}ipStatus.textContent='Querying approximate location…';try{const response=await fetch(`https://ipapi.co/${encodeURIComponent(ip)}/json/`);if(!response.ok)throw new Error('Lookup failed');const data=await response.json();if(data.error)throw new Error(data.reason||'Location unavailable');const pin={ip,date:dateInput.value,label:document.getElementById('labelInput').value.trim(),latitude:Number(data.latitude),longitude:Number(data.longitude),city:data.city,country:data.country_name,source:'ipapi.co'};if(!Number.isFinite(pin.latitude)||!Number.isFinite(pin.longitude))throw new Error('No coordinates returned');pins.push(pin);persist();showPin(pin);livePin.classList.add('active');livePin.style.left=`${toGlobePosition(pin.latitude,pin.longitude).x}%`;livePin.style.top=`${toGlobePosition(pin.latitude,pin.longitude).y}%`;ipStatus.textContent='Signal plotted. Location is approximate.';locationReadout.innerHTML=`<span>${escapeHtml(pin.ip)} · ${escapeHtml(pin.date)}</span><strong>${escapeHtml(pin.city||'Unknown area')}${pin.country?', '+escapeHtml(pin.country):''}</strong>`}catch(error){ipStatus.textContent=error.message||'Could not locate that IP.'}});
+for(let i=0;i<35;i++){const star=document.createElement('i');star.className='star';star.style.cssText=`left:${Math.random()*98}%;top:${Math.random()*96}%;--s:${Math.random()*3+1}px;animation-delay:${Math.random()*4}s`;document.getElementById('stars').appendChild(star)}
+renderPins();pins.forEach(showPin);
