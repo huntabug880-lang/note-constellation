@@ -5,9 +5,11 @@ A UE5-inspired blueprint board for IT and OSINT workflows. It turns investigatio
 ## Features
 
 - Blueprint-style node graph for investigations
+- Multiple saved investigation cases with tabs
 - Palette of intelligence node types
 - Draggable connected nodes
-- Insight panel for case details and editing
+- Editable case inspector panel
+- Filter chips for node categories
 - Local browser persistence so the graph is retained across refreshes
 - High-contrast neon cyber aesthetic tuned for technical research
 

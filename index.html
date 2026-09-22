@@ -20,7 +20,10 @@
           </div>
         </div>
 
+        <div class="case-strip" id="caseTabs"></div>
+
         <div class="topbar-actions">
+          <button class="ghost-button" id="newCaseBtn">+ New case</button>
           <button class="ghost-button" id="newNoteBtn">+ New node</button>
           <button class="icon-button" id="themeToggle" aria-label="Toggle glow mode">◌</button>
         </div>
@@ -87,6 +90,14 @@
         <main class="canvas-panel">
           <div class="canvas-toolbar">
             <div class="crumbs">Investigation / Map</div>
+            <div class="toolbar-filters" id="filterChips">
+              <button class="filter-chip active" data-filter="all">All</button>
+              <button class="filter-chip" data-filter="recon">Recon</button>
+              <button class="filter-chip" data-filter="asset">Assets</button>
+              <button class="filter-chip" data-filter="indicator">Indicators</button>
+              <button class="filter-chip" data-filter="evidence">Evidence</button>
+              <button class="filter-chip" data-filter="analysis">Analysis</button>
+            </div>
             <div class="status-pill" id="saveStatus">Saved</div>
           </div>
 
@@ -102,16 +113,21 @@
           <div class="case-card">
             <div class="case-title-row">
               <div class="case-badge">Case</div>
-              <span class="case-status">Open</span>
+              <span class="case-status" id="caseStatus">Open</span>
             </div>
-            <h3>Target: Blackstone Labs</h3>
-            <p>Initial open-source network review and service enumeration.</p>
+            <h3 id="caseTitleDisplay">Target: Blackstone Labs</h3>
+            <p id="caseSummaryDisplay">Initial open-source network review and service enumeration.</p>
           </div>
 
           <div class="inspector-form" id="inspectorForm">
             <label>
               <span>Title</span>
               <input id="nodeTitleInput" type="text" value="" />
+            </label>
+
+            <label>
+              <span>Entity</span>
+              <input id="nodeEntityInput" type="text" value="" placeholder="domain, ip, host, user" />
             </label>
 
             <label>
@@ -131,8 +147,25 @@
               </label>
 
               <label>
+                <span>Confidence</span>
+                <select id="nodeConfidence">
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                  <option value="confirmed">Confirmed</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="two-col">
+              <label>
                 <span>Type</span>
                 <input id="nodeTypeInput" type="text" value="" disabled />
+              </label>
+
+              <label>
+                <span>Source</span>
+                <input id="nodeSourceInput" type="text" value="" placeholder="OSINT, scan, dump" />
               </label>
             </div>
 
