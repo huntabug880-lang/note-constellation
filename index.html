@@ -1,75 +1,95 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#080d2b" />
-  <title>Note Constellation</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <div class="app-shell">
-    <header class="topbar">
-      <a class="brand" href="#" aria-label="Note Constellation home">
-        <span class="brand-mark"><i></i><i></i><i></i></span>
-        <span>note<span>constellation</span></span>
-      </a>
-      <div class="topbar-actions">
-        <span class="saved-status" id="savedStatus"><span class="status-dot"></span> All changes saved</span>
-        <button class="icon-button" id="themeToggle" aria-label="Toggle glow mode">☼</button>
-        <div class="avatar">HB</div>
-      </div>
-    </header>
-
-    <main class="workspace">
-      <section class="intro-row">
-        <div>
-          <p class="eyebrow">YOUR UNIVERSE · <span id="noteCount">03</span> NOTES</p>
-          <h1>Think in <em>constellations.</em></h1>
-          <p class="subcopy">Capture sparks of thought, then connect the dots.</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blueprint Constellation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand-wrap">
+          <div class="brand-mark">◈</div>
+          <div>
+            <div class="brand-name">Note Blueprint</div>
+            <div class="brand-sub">constellation logic</div>
+          </div>
         </div>
-        <button class="primary-button" id="newNoteButton"><span>＋</span> New note</button>
-      </section>
 
-      <section class="constellation-card" aria-label="Your note constellation">
-        <div class="space-noise"></div>
-        <div class="constellation-label label-one">ideas</div>
-        <div class="constellation-label label-two">projects</div>
-        <div class="constellation-label label-three">inspiration</div>
-        <svg class="constellation-lines" viewBox="0 0 1000 440" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M95 252 L180 145 L286 196 L365 103 L470 164 L542 79 L636 161 L735 106 L814 194 L903 119" />
-          <path d="M180 145 L205 303 L286 196 L345 305 L470 164" />
-          <path d="M542 79 L570 270 L636 161 L685 300 L814 194" />
-          <path d="M735 106 L770 32 M814 194 L892 283 L903 119" />
-        </svg>
-        <div class="star-field" id="starField"></div>
-        <div class="note-node node-a" data-note="0"><span class="node-glow"></span><span class="node-core">✦</span><span class="node-caption">The beginning</span></div>
-        <div class="note-node node-b" data-note="1"><span class="node-glow"></span><span class="node-core">✦</span><span class="node-caption">Design system</span></div>
-        <div class="note-node node-c" data-note="2"><span class="node-glow"></span><span class="node-core">✦</span><span class="node-caption">Quiet rituals</span></div>
-        <div class="note-node node-d"><span class="node-glow"></span><span class="node-core small">✦</span></div>
-        <div class="orbit-hint">Click a star to open its note</div>
-      </section>
+        <div class="topbar-actions">
+          <button class="ghost-button" id="newNoteBtn">+ New node</button>
+          <button class="icon-button" id="themeToggle" aria-label="Toggle glow mode">◌</button>
+        </div>
+      </header>
 
-      <section class="notes-section">
-        <div class="section-heading"><div><p class="eyebrow">RECENT SPARKS</p><h2>Keep exploring</h2></div><button class="filter-button">All colors <span>⌄</span></button></div>
-        <div class="notes-grid" id="notesGrid"></div>
-      </section>
-    </main>
-  </div>
+      <div class="workspace">
+        <aside class="sidebar">
+          <div class="panel-header">Palette</div>
 
-  <dialog id="noteDialog">
-    <form method="dialog" id="noteForm">
-      <button class="close-button" value="cancel" aria-label="Close">×</button>
-      <p class="eyebrow">NEW SPARK</p>
-      <input id="noteTitle" name="title" placeholder="Give this thought a name" autocomplete="off" required />
-      <textarea id="noteBody" name="body" placeholder="Let the idea unfold..." required></textarea>
-      <div class="color-picker"><span>Choose a glow</span><div id="colorOptions"></div></div>
-      <button class="primary-button save-button" value="default">Add to constellation <span>↗</span></button>
-    </form>
-  </dialog>
-  <script src="app.js"></script>
-</body>
+          <div class="palette-group">
+            <button class="palette-item" data-template="idea">
+              <span class="palette-swatch cyan"></span>
+              <span>
+                <strong>Idea</strong>
+                <small>Note node</small>
+              </span>
+            </button>
+
+            <button class="palette-item" data-template="branch">
+              <span class="palette-swatch gold"></span>
+              <span>
+                <strong>Branch</strong>
+                <small>Decision</small>
+              </span>
+            </button>
+
+            <button class="palette-item" data-template="trigger">
+              <span class="palette-swatch pink"></span>
+              <span>
+                <strong>Trigger</strong>
+                <small>Event</small>
+              </span>
+            </button>
+
+            <button class="palette-item" data-template="variable">
+              <span class="palette-swatch violet"></span>
+              <span>
+                <strong>Variable</strong>
+                <small>State</small>
+              </span>
+            </button>
+          </div>
+
+          <div class="mini-stats">
+            <div>
+              <span class="eyebrow">Nodes</span>
+              <strong id="nodeCount">0</strong>
+            </div>
+            <div>
+              <span class="eyebrow">Links</span>
+              <strong id="linkCount">0</strong>
+            </div>
+          </div>
+        </aside>
+
+        <main class="canvas-panel">
+          <div class="canvas-toolbar">
+            <div class="crumbs">Graph / Thought map</div>
+            <div class="status-pill" id="saveStatus">Saved</div>
+          </div>
+
+          <div class="graph-stage" id="graphStage">
+            <svg class="wire-layer" id="wireLayer" aria-hidden="true"></svg>
+            <div class="node-layer" id="nodeLayer"></div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
 </html>
