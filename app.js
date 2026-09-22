@@ -1,598 +1,143 @@
-const STORAGE_KEY = 'signal-graph-cases-v2';
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Note Constellation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="Note Constellation home">
+          <span class="brand-mark"><i></i><i></i><i></i></span>
+          <span>note<span>constellation</span></span>
+        </a>
 
-const templates = {
-  recon: {
-    type: 'recon',
-    label: 'Recon',
-    color: 'cyan',
-    title: 'Target profile',
-    text: 'Map the target surface: domains, subdomains, services, and exposed entry points.'
-  },
-  asset: {
-    type: 'asset',
-    label: 'Asset',
-    color: 'gold',
-    title: 'Critical asset',
-    text: 'Identify vulnerable infrastructure, endpoints, or systems that matter to the investigation.'
-  },
-  indicator: {
-    type: 'indicator',
-    label: 'Indicator',
-    color: 'pink',
-    title: 'Threat indicator',
-    text: 'Track IPs, hashes, emails, domains, or behaviors tied to the target.'
-  },
-  evidence: {
-    type: 'evidence',
-    label: 'Evidence',
-    color: 'violet',
-    title: 'Artifacts / source',
-    text: 'Capture public reports, screenshots, metadata, or evidence tied to a finding.'
-  },
-  analysis: {
-    type: 'analysis',
-    label: 'Analysis',
-    color: 'teal',
-    title: 'Correlation',
-    text: 'Connect findings into a narrative and assess risk, overlap, and confidence.'
-  }
-};
-
-const defaultCases = [
-  {
-    id: 'case-blackstone',
-    name: 'Blackstone Labs',
-    summary: 'Initial open-source network review and service enumeration.',
-    status: 'Open',
-    nodes: [
-      {
-        id: 'n1',
-        x: 120,
-        y: 120,
-        title: 'Initial target',
-        text: 'A suspicious domain, service, or actor profile with unclear scope.',
-        entity: 'blackstonelabs.example',
-        source: 'OSINT',
-        type: 'recon',
-        color: 'cyan',
-        severity: 'medium',
-        confidence: 'medium',
-        tags: ['target', 'dns']
-      },
-      {
-        id: 'n2',
-        x: 420,
-        y: 170,
-        title: 'Open-source discovery',
-        text: 'Enumerate public records, DNS, endpoints, and social signals.',
-        entity: 'www.blackstonelabs.example',
-        source: 'Shodan',
-        type: 'asset',
-        color: 'gold',
-        severity: 'high',
-        confidence: 'high',
-        tags: ['public', 'infrastructure']
-      },
-      {
-        id: 'n3',
-        x: 760,
-        y: 250,
-        title: 'Indicator tie-in',
-        text: 'Map suspicious IPs, domains, hashes, and infrastructure behavior.',
-        entity: '203.0.113.42',
-        source: 'Threat intel feed',
-        type: 'indicator',
-        color: 'pink',
-        severity: 'critical',
-        confidence: 'confirmed',
-        tags: ['malware', 'ip']
-      },
-      {
-        id: 'n4',
-        x: 530,
-        y: 420,
-        title: 'Evidence review',
-        text: 'Watchlists, screenshots, leaked records, host metadata, and logs.',
-        entity: 'screenshot-2024-02-18',
-        source: 'Archive',
-        type: 'evidence',
-        color: 'violet',
-        severity: 'high',
-        confidence: 'medium',
-        tags: ['logs', 'screenshot']
-      },
-      {
-        id: 'n5',
-        x: 200,
-        y: 490,
-        title: 'Risk assessment',
-        text: 'Evaluate confidence, scope, and operational impact of the findings.',
-        entity: 'risk-review',
-        source: 'Analyst',
-        type: 'analysis',
-        color: 'teal',
-        severity: 'medium',
-        confidence: 'high',
-        tags: ['confidence', 'risk']
-      }
-    ],
-    connections: [
-      { from: 'n1', to: 'n2' },
-      { from: 'n2', to: 'n3' },
-      { from: 'n3', to: 'n4' },
-      { from: 'n4', to: 'n5' },
-      { from: 'n2', to: 'n5' }
-    ]
-  },
-  {
-    id: 'case-credential-leak',
-    name: 'Credential Exposure',
-    summary: 'Review leaked credentials and cross-reference with internal reuse patterns.',
-    status: 'Monitoring',
-    nodes: [
-      {
-        id: 'n10',
-        x: 150,
-        y: 140,
-        title: 'Leaked dataset',
-        text: 'Junior dataset appears to contain credential material with matching usernames.',
-        entity: 'breach-archive',
-        source: 'Dark web',
-        type: 'evidence',
-        color: 'violet',
-        severity: 'critical',
-        confidence: 'confirmed',
-        tags: ['breach', 'credentials']
-      },
-      {
-        id: 'n11',
-        x: 450,
-        y: 180,
-        title: 'Account correlation',
-        text: 'Username pattern overlaps with employee identities and public directory records.',
-        entity: 'employee-usernames',
-        source: 'Identity graph',
-        type: 'analysis',
-        color: 'teal',
-        severity: 'high',
-        confidence: 'high',
-        tags: ['identity', 'reuse']
-      },
-      {
-        id: 'n12',
-        x: 760,
-        y: 320,
-        title: 'Hosted service',
-        text: 'A webmail and portal infrastructure is publicly discoverable and internet-facing.',
-        entity: 'mail.portal.local',
-        source: 'DNS',
-        type: 'asset',
-        color: 'gold',
-        severity: 'medium',
-        confidence: 'high',
-        tags: ['mail', 'service']
-      }
-    ],
-    connections: [
-      { from: 'n10', to: 'n11' },
-      { from: 'n11', to: 'n12' }
-    ]
-  }
-];
-
-const nodeLayer = document.getElementById('nodeLayer');
-const wireLayer = document.getElementById('wireLayer');
-const saveStatus = document.getElementById('saveStatus');
-const nodeCount = document.getElementById('nodeCount');
-const linkCount = document.getElementById('linkCount');
-const newNoteBtn = document.getElementById('newNoteBtn');
-const newCaseBtn = document.getElementById('newCaseBtn');
-const themeToggle = document.getElementById('themeToggle');
-const nodeTitleInput = document.getElementById('nodeTitleInput');
-const nodeEntityInput = document.getElementById('nodeEntityInput');
-const nodeTextInput = document.getElementById('nodeTextInput');
-const nodeSeverity = document.getElementById('nodeSeverity');
-const nodeConfidence = document.getElementById('nodeConfidence');
-const nodeTypeInput = document.getElementById('nodeTypeInput');
-const nodeSourceInput = document.getElementById('nodeSourceInput');
-const nodeTagsInput = document.getElementById('nodeTagsInput');
-const saveNodeBtn = document.getElementById('saveNodeBtn');
-const deleteNodeBtn = document.getElementById('deleteNodeBtn');
-const caseTabs = document.getElementById('caseTabs');
-const caseTitleDisplay = document.getElementById('caseTitleDisplay');
-const caseSummaryDisplay = document.getElementById('caseSummaryDisplay');
-const caseStatus = document.getElementById('caseStatus');
-const filterChips = document.getElementById('filterChips');
-
-let appState = loadState();
-let selectedNodeId = null;
-let activeFilter = 'all';
-let dragState = null;
-let linking = null;
-
-function loadState() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { currentCaseId: defaultCases[0].id, cases: defaultCases };
-    return JSON.parse(raw);
-  } catch (error) {
-    return { currentCaseId: defaultCases[0].id, cases: defaultCases };
-  }
-}
-
-function getCurrentCase() {
-  return appState.cases.find(caseItem => caseItem.id === appState.currentCaseId) || appState.cases[0];
-}
-
-function saveState() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
-  saveStatus.textContent = 'Saved';
-}
-
-function updateSummary() {
-  const currentCase = getCurrentCase();
-  nodeCount.textContent = String(currentCase.nodes.length);
-  linkCount.textContent = String(currentCase.connections.length);
-}
-
-function getNodeById(id) {
-  return getCurrentCase().nodes.find(node => node.id === id);
-}
-
-function createNodeId() {
-  return `n${Math.random().toString(36).slice(2, 9)}`;
-}
-
-function makeNode(templateKey, forcedX = 180, forcedY = 140) {
-  const template = templates[templateKey];
-  return {
-    id: createNodeId(),
-    x: forcedX,
-    y: forcedY,
-    title: template.title,
-    text: template.text,
-    entity: 'new-entity',
-    source: 'Manual entry',
-    type: template.type,
-    color: template.color,
-    severity: 'medium',
-    confidence: 'medium',
-    tags: ['new']
-  };
-}
-
-function resetSaveStatus() {
-  saveStatus.textContent = 'Unsaved';
-}
-
-function escapeHtml(value) {
-  return String(value).replace(/[&<>"']/g, char => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;'
-  }[char]));
-}
-
-function renderCaseTabs() {
-  caseTabs.innerHTML = '';
-  appState.cases.forEach(caseItem => {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = `case-tab ${appState.currentCaseId === caseItem.id ? 'active' : ''}`;
-    button.textContent = caseItem.name;
-    button.addEventListener('click', () => {
-      appState.currentCaseId = caseItem.id;
-      selectedNodeId = caseItem.nodes[0]?.id || null;
-      saveState();
-      render();
-    });
-    caseTabs.appendChild(button);
-  });
-}
-
-function renderCaseHeader() {
-  const currentCase = getCurrentCase();
-  caseTitleDisplay.textContent = currentCase.name;
-  caseSummaryDisplay.textContent = currentCase.summary;
-  caseStatus.textContent = currentCase.status || 'Open';
-}
-
-function renderFilters() {
-  filterChips.querySelectorAll('.filter-chip').forEach(button => {
-    const isActive = button.dataset.filter === activeFilter;
-    button.classList.toggle('active', isActive);
-  });
-}
-
-function renderInspector() {
-  const selected = getNodeById(selectedNodeId);
-  if (!selected) {
-    nodeTitleInput.value = '';
-    nodeEntityInput.value = '';
-    nodeTextInput.value = '';
-    nodeSeverity.value = 'medium';
-    nodeConfidence.value = 'medium';
-    nodeTypeInput.value = '';
-    nodeSourceInput.value = '';
-    nodeTagsInput.value = '';
-    return;
-  }
-
-  nodeTitleInput.value = selected.title || '';
-  nodeEntityInput.value = selected.entity || '';
-  nodeTextInput.value = selected.text || '';
-  nodeSeverity.value = selected.severity || 'medium';
-  nodeConfidence.value = selected.confidence || 'medium';
-  nodeTypeInput.value = templates[selected.type]?.label || selected.type || '';
-  nodeSourceInput.value = selected.source || '';
-  nodeTagsInput.value = Array.isArray(selected.tags) ? selected.tags.join(', ') : '';
-}
-
-function renderWires() {
-  const svg = wireLayer;
-  const currentCase = getCurrentCase();
-  svg.innerHTML = '';
-
-  currentCase.connections.forEach(connection => {
-    const from = getNodeById(connection.from);
-    const to = getNodeById(connection.to);
-    if (!from || !to) return;
-
-    const startX = from.x + 220;
-    const startY = from.y + 54;
-    const endX = to.x;
-    const endY = to.y + 54;
-    const curve = 90;
-
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute(
-      'd',
-      `M ${startX} ${startY} C ${startX + curve} ${startY}, ${endX - curve} ${endY}, ${endX} ${endY}`
-    );
-    path.setAttribute('class', 'wire');
-    svg.appendChild(path);
-  });
-}
-
-function renderNodes() {
-  const currentCase = getCurrentCase();
-  nodeLayer.innerHTML = '';
-
-  currentCase.nodes.forEach(node => {
-    if (activeFilter !== 'all' && node.type !== activeFilter) {
-      return;
-    }
-
-    const el = document.createElement('div');
-    el.className = `node ${selectedNodeId === node.id ? 'selected' : ''}`;
-    el.dataset.id = node.id;
-    el.dataset.color = node.color;
-    el.style.left = `${node.x}px`;
-    el.style.top = `${node.y}px`;
-
-    const tags = Array.isArray(node.tags) ? node.tags.slice(0, 2).map(tag => `<span class="meta-pill">${escapeHtml(tag)}</span>`).join('') : '';
-
-    el.innerHTML = `
-      <div class="node-pins">
-        <span class="pin input"></span>
-        <span class="pin output"></span>
-      </div>
-      <div class="node-header">
-        <span class="node-tag">${templates[node.type]?.label || node.type}</span>
-        <div class="node-actions">✦</div>
-      </div>
-      <div class="node-body">
-        <h3 class="node-title">${escapeHtml(node.title)}</h3>
-        <p class="node-text">${escapeHtml(node.text)}</p>
-        <div class="node-footer">
-          <span>${escapeHtml(node.severity || 'medium')}</span>
-          <div class="meta-list">${tags}</div>
+        <div class="topbar-actions">
+          <span class="saved-status" id="savedStatus"><span class="status-dot"></span> All changes saved</span>
+          <button class="icon-button" id="themeToggle" aria-label="Toggle glow mode">☼</button>
+          <div class="avatar">HB</div>
         </div>
-      </div>
-    `;
+      </header>
 
-    el.addEventListener('click', event => {
-      if (event.target.closest('.pin')) return;
-      selectedNodeId = node.id;
-      render();
-    });
+      <main class="workspace">
+        <section class="intro-row">
+          <div>
+            <p class="eyebrow">YOUR UNIVERSE · <span id="noteCount">03</span> NOTES</p>
+            <h1>Think in <em>constellations.</em></h1>
+            <p class="subcopy">Capture sparks of thought, then connect the dots.</p>
+          </div>
+          <button class="primary-button" id="newNoteButton"><span>＋</span> New note</button>
+        </section>
 
-    const header = el.querySelector('.node-header');
-    header.addEventListener('pointerdown', event => {
-      if (event.target.closest('.node-actions')) return;
-      dragState = {
-        id: node.id,
-        startX: event.clientX,
-        startY: event.clientY,
-        nodeX: node.x,
-        nodeY: node.y
-      };
-      selectedNodeId = node.id;
-      render();
-    });
+        <section class="constellation-card" aria-label="Your note constellation">
+          <div class="space-noise"></div>
+          <div class="constellation-label label-one">ideas</div>
+          <div class="constellation-label label-two">projects</div>
+          <div class="constellation-label label-three">inspiration</div>
 
-    const inputPin = el.querySelector('.pin.input');
-    const outputPin = el.querySelector('.pin.output');
+          <svg class="constellation-lines" viewBox="0 0 1000 440" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M95 252 L180 145 L286 196 L365 103 L470 164 L542 79 L636 161 L735 106 L814 194 L903 119" />
+            <path d="M180 145 L205 303 L286 196 L345 305 L470 164" />
+            <path d="M542 79 L570 270 L636 161 L685 300 L814 194" />
+            <path d="M735 106 L770 32 M814 194 L892 283 L903 119" />
+          </svg>
 
-    inputPin.addEventListener('pointerdown', event => {
-      event.stopPropagation();
-      startLink(node.id, 'in');
-    });
+          <div class="zodiac-label gemini">GEMINI</div>
+          <div class="zodiac-label taurus">TAURUS</div>
+          <div class="zodiac-label aries">ARIES</div>
+          <div class="zodiac-label pisces">PISCES</div>
+          <div class="zodiac-label scorpio">SCORPIUS</div>
+          <div class="zodiac-label virgo">VIRGO</div>
+          <div class="zodiac-label leo">LEO</div>
+          <div class="zodiac-label sagittarius">SAGITTARIUS</div>
+          <div class="zodiac-label aquarius">AQUARIUS</div>
+          <div class="zodiac-label cancer">CANCER</div>
+          <div class="zodiac-label libra">LIBRA</div>
+          <div class="zodiac-label capricorn">CAPRICORN</div>
 
-    outputPin.addEventListener('pointerdown', event => {
-      event.stopPropagation();
-      startLink(node.id, 'out');
-    });
+          <div class="star-field" id="starField"></div>
 
-    nodeLayer.appendChild(el);
-  });
-}
+          <button class="note-node node-a" type="button" data-note="0">
+            <span class="node-glow"></span>
+            <span class="node-core">✦</span>
+            <span class="node-caption">The beginning</span>
+          </button>
+          <button class="note-node node-b" type="button" data-note="1">
+            <span class="node-glow"></span>
+            <span class="node-core">✦</span>
+            <span class="node-caption">Design system</span>
+          </button>
+          <button class="note-node node-c" type="button" data-note="2">
+            <span class="node-glow"></span>
+            <span class="node-core">✦</span>
+            <span class="node-caption">Quiet rituals</span>
+          </button>
+          <button class="note-node node-d" type="button" data-note="3">
+            <span class="node-glow"></span>
+            <span class="node-core">✦</span>
+            <span class="node-caption">New spark</span>
+          </button>
+          <button class="note-node node-e" type="button" data-note="4">
+            <span class="node-glow"></span>
+            <span class="node-core">✦</span>
+            <span class="node-caption">Collect notes</span>
+          </button>
+          <button class="note-node node-f" type="button" data-note="5">
+            <span class="node-glow"></span>
+            <span class="node-core">✦</span>
+            <span class="node-caption">Side quests</span>
+          </button>
+        </section>
 
-function render() {
-  renderCaseTabs();
-  renderCaseHeader();
-  renderFilters();
-  renderWires();
-  renderNodes();
-  renderInspector();
-  updateSummary();
-}
+        <section class="notes-section" aria-label="Note cards">
+          <div class="section-heading">
+            <h2>Recent sparks</h2>
+            <span>Keep orbiting ideas alive</span>
+          </div>
+          <div class="notes-grid" id="notesGrid"></div>
+        </section>
+      </main>
+    </div>
 
-function addNode(templateKey) {
-  const currentCase = getCurrentCase();
-  const node = makeNode(templateKey, 180 + Math.random() * 220, 150 + Math.random() * 200);
-  currentCase.nodes.push(node);
-  selectedNodeId = node.id;
-  resetSaveStatus();
-  saveState();
-  render();
-}
+    <dialog id="noteDialog" aria-labelledby="noteDialogTitle">
+      <form class="note-form" id="noteForm" method="dialog">
+        <div class="dialog-header">
+          <h3 id="noteDialogTitle">Edit note</h3>
+          <button type="button" class="dialog-close" data-close-dialog aria-label="Close note editor">×</button>
+        </div>
 
-function startLink(nodeId) {
-  linking = { from: nodeId };
-}
+        <label>
+          <span>Title</span>
+          <input id="noteTitle" name="title" type="text" maxlength="80" placeholder="Title your spark" />
+        </label>
 
-window.addEventListener('pointermove', event => {
-  if (!dragState) return;
+        <label>
+          <span>Tag</span>
+          <input id="noteTag" name="tag" type="text" maxlength="24" placeholder="starting point" />
+        </label>
 
-  const currentCase = getCurrentCase();
-  const node = currentCase.nodes.find(item => item.id === dragState.id);
-  if (!node) return;
+        <label>
+          <span>Thought</span>
+          <textarea id="noteBody" name="body" rows="6" placeholder="Write the note that wants to grow..."></textarea>
+        </label>
 
-  node.x = Math.max(30, dragState.nodeX + (event.clientX - dragState.startX));
-  node.y = Math.max(30, dragState.nodeY + (event.clientY - dragState.startY));
+        <div class="color-picker-wrap">
+          <span>Glow</span>
+          <div class="color-options" id="colorOptions"></div>
+        </div>
 
-  render();
-  resetSaveStatus();
-});
+        <div class="dialog-actions">
+          <button type="button" class="secondary-button" data-close-dialog>Cancel</button>
+          <button type="submit" class="primary-button narrow">Save note</button>
+        </div>
+      </form>
+    </dialog>
 
-window.addEventListener('pointerup', event => {
-  if (dragState) {
-    saveState();
-    dragState = null;
-  }
-
-  if (linking) {
-    const targetNode = document.elementFromPoint(event.clientX, event.clientY)?.closest('.node');
-    if (targetNode) {
-      const targetId = targetNode.dataset.id;
-      if (targetId && targetId !== linking.from) {
-        const currentCase = getCurrentCase();
-        const exists = currentCase.connections.some(connection => connection.from === linking.from && connection.to === targetId);
-        if (!exists) {
-          currentCase.connections.push({ from: linking.from, to: targetId });
-          resetSaveStatus();
-        }
-      }
-    }
-    linking = null;
-    saveState();
-    render();
-  }
-});
-
-saveNodeBtn.addEventListener('click', () => {
-  const currentCase = getCurrentCase();
-  const selected = currentCase.nodes.find(node => node.id === selectedNodeId);
-  if (!selected) return;
-
-  selected.title = nodeTitleInput.value.trim() || selected.title;
-  selected.entity = nodeEntityInput.value.trim() || selected.entity;
-  selected.text = nodeTextInput.value.trim() || selected.text;
-  selected.severity = nodeSeverity.value;
-  selected.confidence = nodeConfidence.value;
-  selected.source = nodeSourceInput.value.trim() || selected.source;
-  selected.tags = nodeTagsInput.value
-    .split(',')
-    .map(tag => tag.trim())
-    .filter(Boolean);
-
-  resetSaveStatus();
-  saveState();
-  render();
-});
-
-deleteNodeBtn.addEventListener('click', () => {
-  const currentCase = getCurrentCase();
-  if (!selectedNodeId) return;
-  currentCase.nodes = currentCase.nodes.filter(node => node.id !== selectedNodeId);
-  currentCase.connections = currentCase.connections.filter(
-    connection => connection.from !== selectedNodeId && connection.to !== selectedNodeId
-  );
-  selectedNodeId = currentCase.nodes[0]?.id || null;
-  resetSaveStatus();
-  saveState();
-  render();
-});
-
-newNoteBtn.addEventListener('click', () => {
-  addNode('analysis');
-});
-
-newCaseBtn.addEventListener('click', () => {
-  const name = `Case ${appState.cases.length + 1}`;
-  const newCase = {
-    id: `case-${Date.now()}`,
-    name,
-    summary: 'New investigation board for an active case.',
-    status: 'Open',
-    nodes: [
-      {
-        id: createNodeId(),
-        x: 120,
-        y: 140,
-        title: 'New lead',
-        text: 'Capture the first signal or focal point for this investigation.',
-        entity: 'new lead',
-        source: 'Manual entry',
-        type: 'recon',
-        color: 'cyan',
-        severity: 'medium',
-        confidence: 'medium',
-        tags: ['lead']
-      }
-    ],
-    connections: []
-  };
-
-  appState.cases.push(newCase);
-  appState.currentCaseId = newCase.id;
-  selectedNodeId = newCase.nodes[0].id;
-  saveState();
-  render();
-});
-
-document.querySelectorAll('[data-template]').forEach(button => {
-  button.addEventListener('click', () => addNode(button.dataset.template));
-});
-
-filterChips.addEventListener('click', event => {
-  const button = event.target.closest('[data-filter]');
-  if (!button) return;
-  activeFilter = button.dataset.filter;
-  render();
-});
-
-themeToggle.addEventListener('click', () => {
-  document.body.classList.toggle('theme-future');
-});
-
-window.addEventListener('keydown', event => {
-  if (event.key === 'Delete' && selectedNodeId) {
-    const currentCase = getCurrentCase();
-    currentCase.nodes = currentCase.nodes.filter(node => node.id !== selectedNodeId);
-    currentCase.connections = currentCase.connections.filter(
-      connection => connection.from !== selectedNodeId && connection.to !== selectedNodeId
-    );
-    selectedNodeId = currentCase.nodes[0]?.id || null;
-    resetSaveStatus();
-    saveState();
-    render();
-  }
-});
-
-selectedNodeId = getCurrentCase().nodes[0]?.id || null;
-render();
-saveState();
+    <script src="app.js"></script>
+  </body>
+</html>
