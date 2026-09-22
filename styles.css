@@ -3,8 +3,8 @@
 }
 
 :root {
-  --bg: #050b1f;
-  --bg-2: #0a1739;
+  --bg: #040d1f;
+  --bg-2: #091b38;
   --panel: rgba(11, 18, 38, 0.88);
   --panel-strong: rgba(17, 25, 51, 0.92);
   --panel-soft: rgba(24, 36, 74, 0.85);
@@ -27,8 +27,8 @@ html, body {
   min-height: 100%;
   font-family: 'Inter', sans-serif;
   background:
-    radial-gradient(circle at 15% 10%, rgba(109, 140, 255, 0.22), transparent 26%),
-    radial-gradient(circle at 80% 18%, rgba(89, 255, 230, 0.08), transparent 28%),
+    radial-gradient(circle at 15% 10%, rgba(91, 153, 255, 0.22), transparent 26%),
+    radial-gradient(circle at 80% 18%, rgba(95, 231, 199, 0.08), transparent 28%),
     linear-gradient(180deg, #040b1d 0%, #090f29 100%);
   color: var(--text);
 }
@@ -43,7 +43,7 @@ body::before {
     radial-gradient(circle, rgba(134, 163, 255, 0.6) 0 1px, transparent 1.4px);
   background-position: 0 0, 18px 18px;
   background-size: 38px 38px;
-  opacity: 0.24;
+  opacity: 0.2;
 }
 
 button {
@@ -135,7 +135,7 @@ button {
 
 .workspace {
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: 300px 1fr;
   min-height: 820px;
 }
 
@@ -194,6 +194,7 @@ button {
 .palette-swatch.gold { background: var(--gold); color: var(--gold); }
 .palette-swatch.pink { background: var(--pink); color: var(--pink); }
 .palette-swatch.violet { background: var(--violet); color: var(--violet); }
+.palette-swatch.teal { background: var(--teal); color: var(--teal); }
 
 .mini-stats {
   margin-top: 28px;
@@ -300,7 +301,7 @@ button {
 .node {
   position: absolute;
   width: 224px;
-  min-height: 132px;
+  min-height: 146px;
   border-radius: 14px;
   background: rgba(12, 19, 38, 0.96);
   border: 1px solid rgba(148, 196, 255, 0.18);
@@ -425,11 +426,13 @@ button {
 .node[data-color='pink'] { --node-color: var(--pink); border-color: rgba(255, 112, 217, 0.32); }
 .node[data-color='gold'] { --node-color: var(--gold); border-color: rgba(245, 212, 122, 0.32); }
 .node[data-color='violet'] { --node-color: var(--violet); border-color: rgba(162, 141, 255, 0.32); }
+.node[data-color='teal'] { --node-color: var(--teal); border-color: rgba(95, 231, 199, 0.32); }
 
 .node[data-color='cyan'] .node-tag { color: var(--cyan); }
 .node[data-color='pink'] .node-tag { color: var(--pink); }
 .node[data-color='gold'] .node-tag { color: var(--gold); }
 .node[data-color='violet'] .node-tag { color: var(--violet); }
+.node[data-color='teal'] .node-tag { color: var(--teal); }
 
 @media (max-width: 980px) {
   .workspace {

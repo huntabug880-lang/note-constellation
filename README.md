@@ -1,18 +1,18 @@
-# Blueprint Constellation
+# Signal Graph
 
-A node-based approach to note-taking inspired by UE5 Blueprints: ideas become connected blocks on a graph, making thought flow visual and easy to explore.
+A UE5-inspired blueprint board for IT and OSINT work. It turns investigations into connected nodes: recon, assets, indicators, evidence, and correlation.
 
-## Run it locally
+## Run locally
 
 Open `index.html` in a browser.
 
-Notes/blueprint state are stored in `localStorage`.
+State is saved in browser `localStorage` so the graph persists between refreshes.
 
-## Features
+## Target use case
 
-- Blueprint-style graph editor
-- draggable nodes
-- connection lines between notes
-- palette of node types
-- neon cyberpunk/cosmic aesthetic
-- local persistence
+This is built for:
+
+- IT investigations
+- OSINT workflows
+- digital forensics or infrastructure mapping
+- structured note-taking for relationships between assets, evidence, and conclusions

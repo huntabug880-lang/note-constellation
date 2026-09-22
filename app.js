@@ -1,33 +1,40 @@
-const STORAGE_KEY = 'blueprint-constellation-state';
+const STORAGE_KEY = 'signal-graph-state';
 
 const templates = {
-  idea: {
-    type: 'idea',
-    label: 'Idea',
+  recon: {
+    type: 'recon',
+    label: 'Recon',
     color: 'cyan',
-    title: 'New idea',
-    text: 'Capture the thought, shape the spark, and build the next step.'
+    title: 'Target profile',
+    text: 'Map the target surface: domains, subdomains, services, and exposed entry points.'
   },
-  branch: {
-    type: 'branch',
-    label: 'Branch',
+  asset: {
+    type: 'asset',
+    label: 'Asset',
     color: 'gold',
-    title: 'Decision fork',
-    text: 'Ask a question and split the logic into different outcomes.'
+    title: 'Critical asset',
+    text: 'Identify vulnerable infrastructure, endpoints, or systems that matter to the investigation.'
   },
-  trigger: {
-    type: 'trigger',
-    label: 'Trigger',
+  indicator: {
+    type: 'indicator',
+    label: 'Indicator',
     color: 'pink',
-    title: 'Event trigger',
-    text: 'What moment starts this chain of thought?'
+    title: 'Threat indicator',
+    text: 'Track IPs, hashes, emails, domains, or behaviors tied to the target.'
   },
-  variable: {
-    type: 'variable',
-    label: 'Variable',
+  evidence: {
+    type: 'evidence',
+    label: 'Evidence',
     color: 'violet',
-    title: 'State value',
-    text: 'Store the important detail or condition that guides the flow.'
+    title: 'Artifacts / source',
+    text: 'Capture public reports, screenshots, metadata, or evidence tied to a finding.'
+  },
+  analysis: {
+    type: 'analysis',
+    label: 'Analysis',
+    color: 'teal',
+    title: 'Correlation',
+    text: 'Connect findings into a narrative and assess risk, overlap, and confidence.'
   }
 };
 
@@ -37,33 +44,54 @@ const defaultState = {
       id: 'n1',
       x: 120,
       y: 120,
-      title: 'Start with the spark',
-      text: 'Write the first thought that feels impossible to ignore.',
-      type: 'trigger',
-      color: 'pink'
+      title: 'Initial target',
+      text: 'A suspicious domain, service, or actor profile with unclear scope.',
+      type: 'recon',
+      color: 'cyan'
     },
     {
       id: 'n2',
       x: 420,
-      y: 180,
-      title: 'Turn it into structure',
-      text: 'Break the spark into the first clear action or promise.',
-      type: 'idea',
-      color: 'cyan'
+      y: 170,
+      title: 'Open-source discovery',
+      text: 'Enumerate public records, DNS, endpoints, and social signals.',
+      type: 'asset',
+      color: 'gold'
     },
     {
       id: 'n3',
       x: 760,
-      y: 260,
-      title: 'Ask what matters',
-      text: 'Define the key decision, risk, or tradeoff that guides the path.',
-      type: 'branch',
-      color: 'gold'
+      y: 250,
+      title: 'Indicator tie-in',
+      text: 'Map suspicious IPs, domains, hashes, and infrastructure behavior.',
+      type: 'indicator',
+      color: 'pink'
+    },
+    {
+      id: 'n4',
+      x: 530,
+      y: 420,
+      title: 'Evidence review',
+      text: 'Watchlists, screenshots, leaked records, host metadata, and logs.',
+      type: 'evidence',
+      color: 'violet'
+    },
+    {
+      id: 'n5',
+      x: 200,
+      y: 490,
+      title: 'Risk assessment',
+      text: 'Evaluate confidence, scope, and the operational impact of the findings.',
+      type: 'analysis',
+      color: 'teal'
     }
   ],
   connections: [
     { from: 'n1', to: 'n2' },
-    { from: 'n2', to: 'n3' }
+    { from: 'n2', to: 'n3' },
+    { from: 'n3', to: 'n4' },
+    { from: 'n4', to: 'n5' },
+    { from: 'n2', to: 'n5' }
   ]
 };
 
@@ -78,6 +106,7 @@ const themeToggle = document.getElementById('themeToggle');
 let state = loadState();
 let selectedNodeId = null;
 let dragState = null;
+let linking = null;
 
 function loadState() {
   try {
@@ -106,7 +135,7 @@ function createNodeId() {
   return `n${Math.random().toString(36).slice(2, 9)}`;
 }
 
-function makeNode(templateKey, forcedX = 120, forcedY = 120) {
+function makeNode(templateKey, forcedX = 180, forcedY = 140) {
   const template = templates[templateKey];
   return {
     id: createNodeId(),
@@ -121,6 +150,16 @@ function makeNode(templateKey, forcedX = 120, forcedY = 120) {
 
 function resetSaveStatus() {
   saveStatus.textContent = 'Unsaved';
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[char]));
 }
 
 function renderWires() {
@@ -172,7 +211,7 @@ function renderNodes() {
         <h3 class="node-title">${escapeHtml(node.title)}</h3>
         <p class="node-text">${escapeHtml(node.text)}</p>
         <div class="node-footer">
-          <span>Flow</span>
+          <span>Intel</span>
           <span>${node.color}</span>
         </div>
       </div>
@@ -221,28 +260,16 @@ function render() {
   updateSummary();
 }
 
-function escapeHtml(value) {
-  return String(value).replace(/[&<>"']/g, char => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;'
-  }[char]));
-}
-
 function addNode(templateKey) {
-  const node = makeNode(templateKey, 180 + Math.random() * 180, 160 + Math.random() * 170);
+  const node = makeNode(templateKey, 180 + Math.random() * 220, 150 + Math.random() * 200);
   state.nodes.push(node);
   resetSaveStatus();
   saveState();
   render();
 }
 
-let linking = null;
-
-function startLink(nodeId, side) {
-  linking = { from: nodeId, side };
+function startLink(nodeId) {
+  linking = { from: nodeId };
 }
 
 window.addEventListener('pointermove', event => {
@@ -258,14 +285,14 @@ window.addEventListener('pointermove', event => {
   resetSaveStatus();
 });
 
-window.addEventListener('pointerup', () => {
+window.addEventListener('pointerup', event => {
   if (dragState) {
     saveState();
+    dragState = null;
   }
-  dragState = null;
 
   if (linking) {
-    const targetNode = document.elementFromPoint(window.event?.clientX || 0, window.event?.clientY || 0)?.closest('.node');
+    const targetNode = document.elementFromPoint(event.clientX, event.clientY)?.closest('.node');
     if (targetNode) {
       const targetId = targetNode.dataset.id;
       if (targetId && targetId !== linking.from) {
@@ -283,7 +310,7 @@ window.addEventListener('pointerup', () => {
 });
 
 newNoteBtn.addEventListener('click', () => {
-  addNode('idea');
+  addNode('analysis');
 });
 
 document.querySelectorAll('[data-template]').forEach(button => {
