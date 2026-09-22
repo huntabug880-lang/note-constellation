@@ -1,18 +1,28 @@
 # Signal Graph
 
-A UE5-inspired blueprint board for IT and OSINT work. It turns investigations into connected nodes: recon, assets, indicators, evidence, and correlation.
+A UE5-inspired blueprint board for IT and OSINT workflows. It turns investigations into connected nodes: recon, assets, indicators, evidence, and strategic analysis.
+
+## Features
+
+- Blueprint-style node graph for investigations
+- Palette of intelligence node types
+- Draggable connected nodes
+- Insight panel for case details and editing
+- Local browser persistence so the graph is retained across refreshes
+- High-contrast neon cyber aesthetic tuned for technical research
 
 ## Run locally
 
 Open `index.html` in a browser.
 
-State is saved in browser `localStorage` so the graph persists between refreshes.
+## Best use cases
 
-## Target use case
+- OSINT investigations
+- infrastructure and asset mapping
+- threat indicator correlation
+- digital forensics or case-note templating
+- structured research workflows for technical analysts
 
-This is built for:
+## Repo intent
 
-- IT investigations
-- OSINT workflows
-- digital forensics or infrastructure mapping
-- structured note-taking for relationships between assets, evidence, and conclusions
+This project is designed to feel like a visual investigation workspace instead of a traditional note list. Each node represents an operational concept, making it easier to connect evidence, suspicion, and conclusions in a single board.

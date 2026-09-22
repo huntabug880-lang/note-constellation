@@ -47,7 +47,9 @@ const defaultState = {
       title: 'Initial target',
       text: 'A suspicious domain, service, or actor profile with unclear scope.',
       type: 'recon',
-      color: 'cyan'
+      color: 'cyan',
+      severity: 'medium',
+      tags: ['target', 'dns']
     },
     {
       id: 'n2',
@@ -56,7 +58,9 @@ const defaultState = {
       title: 'Open-source discovery',
       text: 'Enumerate public records, DNS, endpoints, and social signals.',
       type: 'asset',
-      color: 'gold'
+      color: 'gold',
+      severity: 'high',
+      tags: ['public', 'infrastructure']
     },
     {
       id: 'n3',
@@ -65,7 +69,9 @@ const defaultState = {
       title: 'Indicator tie-in',
       text: 'Map suspicious IPs, domains, hashes, and infrastructure behavior.',
       type: 'indicator',
-      color: 'pink'
+      color: 'pink',
+      severity: 'critical',
+      tags: ['malware', 'ip']
     },
     {
       id: 'n4',
@@ -74,16 +80,20 @@ const defaultState = {
       title: 'Evidence review',
       text: 'Watchlists, screenshots, leaked records, host metadata, and logs.',
       type: 'evidence',
-      color: 'violet'
+      color: 'violet',
+      severity: 'high',
+      tags: ['logs', 'screenshot']
     },
     {
       id: 'n5',
       x: 200,
       y: 490,
       title: 'Risk assessment',
-      text: 'Evaluate confidence, scope, and the operational impact of the findings.',
+      text: 'Evaluate confidence, scope, and operational impact of the findings.',
       type: 'analysis',
-      color: 'teal'
+      color: 'teal',
+      severity: 'medium',
+      tags: ['confidence', 'risk']
     }
   ],
   connections: [
@@ -102,9 +112,16 @@ const nodeCount = document.getElementById('nodeCount');
 const linkCount = document.getElementById('linkCount');
 const newNoteBtn = document.getElementById('newNoteBtn');
 const themeToggle = document.getElementById('themeToggle');
+const nodeTitleInput = document.getElementById('nodeTitleInput');
+const nodeTextInput = document.getElementById('nodeTextInput');
+const nodeSeverity = document.getElementById('nodeSeverity');
+const nodeTypeInput = document.getElementById('nodeTypeInput');
+const nodeTagsInput = document.getElementById('nodeTagsInput');
+const saveNodeBtn = document.getElementById('saveNodeBtn');
+const deleteNodeBtn = document.getElementById('deleteNodeBtn');
 
 let state = loadState();
-let selectedNodeId = null;
+let selectedNodeId = state.nodes[0]?.id || null;
 let dragState = null;
 let linking = null;
 
@@ -144,7 +161,9 @@ function makeNode(templateKey, forcedX = 180, forcedY = 140) {
     title: template.title,
     text: template.text,
     type: template.type,
-    color: template.color
+    color: template.color,
+    severity: 'medium',
+    tags: ['new']
   };
 }
 
@@ -160,6 +179,24 @@ function escapeHtml(value) {
     '"': '&quot;',
     "'": '&#39;'
   }[char]));
+}
+
+function renderInspector() {
+  const selected = getNodeById(selectedNodeId);
+  if (!selected) {
+    nodeTitleInput.value = '';
+    nodeTextInput.value = '';
+    nodeSeverity.value = 'medium';
+    nodeTypeInput.value = '';
+    nodeTagsInput.value = '';
+    return;
+  }
+
+  nodeTitleInput.value = selected.title || '';
+  nodeTextInput.value = selected.text || '';
+  nodeSeverity.value = selected.severity || 'medium';
+  nodeTypeInput.value = templates[selected.type]?.label || selected.type || '';
+  nodeTagsInput.value = Array.isArray(selected.tags) ? selected.tags.join(', ') : '';
 }
 
 function renderWires() {
@@ -198,6 +235,8 @@ function renderNodes() {
     el.style.left = `${node.x}px`;
     el.style.top = `${node.y}px`;
 
+    const tags = Array.isArray(node.tags) ? node.tags.slice(0, 2).map(tag => `<span class="meta-pill">${escapeHtml(tag)}</span>`).join('') : '';
+
     el.innerHTML = `
       <div class="node-pins">
         <span class="pin input"></span>
@@ -211,8 +250,8 @@ function renderNodes() {
         <h3 class="node-title">${escapeHtml(node.title)}</h3>
         <p class="node-text">${escapeHtml(node.text)}</p>
         <div class="node-footer">
-          <span>Intel</span>
-          <span>${node.color}</span>
+          <span>${escapeHtml(node.severity || 'medium')}</span>
+          <div class="meta-list">${tags}</div>
         </div>
       </div>
     `;
@@ -257,12 +296,14 @@ function renderNodes() {
 function render() {
   renderWires();
   renderNodes();
+  renderInspector();
   updateSummary();
 }
 
 function addNode(templateKey) {
   const node = makeNode(templateKey, 180 + Math.random() * 220, 150 + Math.random() * 200);
   state.nodes.push(node);
+  selectedNodeId = node.id;
   resetSaveStatus();
   saveState();
   render();
@@ -309,6 +350,35 @@ window.addEventListener('pointerup', event => {
   }
 });
 
+saveNodeBtn.addEventListener('click', () => {
+  const selected = getNodeById(selectedNodeId);
+  if (!selected) return;
+
+  selected.title = nodeTitleInput.value.trim() || selected.title;
+  selected.text = nodeTextInput.value.trim() || selected.text;
+  selected.severity = nodeSeverity.value;
+  selected.tags = nodeTagsInput.value
+    .split(',')
+    .map(tag => tag.trim())
+    .filter(Boolean);
+
+  resetSaveStatus();
+  saveState();
+  render();
+});
+
+deleteNodeBtn.addEventListener('click', () => {
+  if (!selectedNodeId) return;
+  state.nodes = state.nodes.filter(node => node.id !== selectedNodeId);
+  state.connections = state.connections.filter(
+    connection => connection.from !== selectedNodeId && connection.to !== selectedNodeId
+  );
+  selectedNodeId = state.nodes[0]?.id || null;
+  resetSaveStatus();
+  saveState();
+  render();
+});
+
 newNoteBtn.addEventListener('click', () => {
   addNode('analysis');
 });
@@ -327,7 +397,7 @@ window.addEventListener('keydown', event => {
     state.connections = state.connections.filter(
       connection => connection.from !== selectedNodeId && connection.to !== selectedNodeId
     );
-    selectedNodeId = null;
+    selectedNodeId = state.nodes[0]?.id || null;
     resetSaveStatus();
     saveState();
     render();

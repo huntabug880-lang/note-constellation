@@ -27,7 +27,7 @@
       </header>
 
       <div class="workspace">
-        <aside class="sidebar">
+        <aside class="sidebar left-panel">
           <div class="panel-header">Intel Palette</div>
 
           <div class="palette-group">
@@ -95,6 +95,58 @@
             <div class="node-layer" id="nodeLayer"></div>
           </div>
         </main>
+
+        <aside class="sidebar right-panel">
+          <div class="panel-header">Case Inspector</div>
+
+          <div class="case-card">
+            <div class="case-title-row">
+              <div class="case-badge">Case</div>
+              <span class="case-status">Open</span>
+            </div>
+            <h3>Target: Blackstone Labs</h3>
+            <p>Initial open-source network review and service enumeration.</p>
+          </div>
+
+          <div class="inspector-form" id="inspectorForm">
+            <label>
+              <span>Title</span>
+              <input id="nodeTitleInput" type="text" value="" />
+            </label>
+
+            <label>
+              <span>Summary</span>
+              <textarea id="nodeTextInput" rows="4"></textarea>
+            </label>
+
+            <div class="two-col">
+              <label>
+                <span>Severity</span>
+                <select id="nodeSeverity">
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                  <option value="critical">Critical</option>
+                </select>
+              </label>
+
+              <label>
+                <span>Type</span>
+                <input id="nodeTypeInput" type="text" value="" disabled />
+              </label>
+            </div>
+
+            <label>
+              <span>Tags</span>
+              <input id="nodeTagsInput" type="text" value="" placeholder="public, dns, suspicious" />
+            </label>
+
+            <div class="inspector-actions">
+              <button type="button" id="saveNodeBtn" class="primary-button">Save node</button>
+              <button type="button" id="deleteNodeBtn" class="danger-button">Delete</button>
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
 
